@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DecentSampler minVersion="1.0.0">
+  <groups attack="0.012" decay="0.8" sustain="0.75" release="0.7" volume="-4dB" ampVelTrack="0.85" globalPan="0">
+    <group name="Glass" volume="1.0">
+      <sample path="Samples/glass-36-soft.wav" rootNote="36" loNote="32" hiNote="39" loVel="1" hiVel="63" loopStart="43826" loopEnd="78887" />
+      <sample path="Samples/glass-36-hard.wav" rootNote="36" loNote="32" hiNote="39" loVel="64" hiVel="127" loopStart="43826" loopEnd="78887" />
+      <sample path="Samples/glass-43-soft.wav" rootNote="43" loNote="39" hiNote="46" loVel="1" hiVel="63" loopStart="44101" loopEnd="79201" />
+      <sample path="Samples/glass-43-hard.wav" rootNote="43" loNote="39" hiNote="46" loVel="64" hiVel="127" loopStart="44101" loopEnd="79201" />
+      <sample path="Samples/glass-48-soft.wav" rootNote="48" loNote="44" hiNote="51" loVel="1" hiVel="63" loopStart="44163" loopEnd="79561" />
+      <sample path="Samples/glass-48-hard.wav" rootNote="48" loNote="44" hiNote="51" loVel="64" hiVel="127" loopStart="44163" loopEnd="79561" />
+      <sample path="Samples/glass-55-soft.wav" rootNote="55" loNote="51" hiNote="58" loVel="1" hiVel="63" loopStart="44101" loopEnd="79426" />
+      <sample path="Samples/glass-55-hard.wav" rootNote="55" loNote="51" hiNote="58" loVel="64" hiVel="127" loopStart="44101" loopEnd="79426" />
+      <sample path="Samples/glass-60-soft.wav" rootNote="60" loNote="56" hiNote="63" loVel="1" hiVel="63" loopStart="44163" loopEnd="79392" />
+      <sample path="Samples/glass-60-hard.wav" rootNote="60" loNote="56" hiNote="63" loVel="64" hiVel="127" loopStart="44163" loopEnd="79392" />
+      <sample path="Samples/glass-67-soft.wav" rootNote="67" loNote="63" hiNote="70" loVel="1" hiVel="63" loopStart="44101" loopEnd="79426" />
+      <sample path="Samples/glass-67-hard.wav" rootNote="67" loNote="63" hiNote="70" loVel="64" hiVel="127" loopStart="44101" loopEnd="79426" />
+      <sample path="Samples/glass-72-soft.wav" rootNote="72" loNote="68" hiNote="75" loVel="1" hiVel="63" loopStart="44079" loopEnd="79392" />
+      <sample path="Samples/glass-72-hard.wav" rootNote="72" loNote="68" hiNote="75" loVel="64" hiVel="127" loopStart="44079" loopEnd="79392" />
+    </group>
+  </groups>
+</DecentSampler>
