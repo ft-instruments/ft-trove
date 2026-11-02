@@ -37,6 +37,9 @@ add_library(trove_core STATIC
   Source/dsp/Effects.cpp)
 target_include_directories(trove_core PUBLIC Source)
 set_target_properties(trove_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
+# Every target that links JUCE compiles juce_core itself: without this the
+# core and the renderer would want libcurl on Linux.
+target_compile_definitions(trove_core PUBLIC JUCE_USE_CURL=0)
 target_link_libraries(trove_core
   PUBLIC
     juce::juce_audio_formats
