@@ -308,6 +308,7 @@ void TroveEditor::applyBinding(const juce::var& msg) {
   if (kind == "groupOn") engine.setGroupEnabled(group, value >= 0.5);
   else if (kind == "groupVolume") engine.setGroupVolume(group, value);
   else if (kind == "groupPan") engine.setGroupPan(group, value);
+  else if (kind == "groupEnv") engine.setGroupEnv(group, msg["stage"].toString(), value);
   else if (kind == "tagVolume") engine.setTagVolume(msg["tag"].toString(), value);
   else if (kind == "tuning") engine.setGlobalTuning(value);
   else if (kind == "modParam") engine.setModParam((int)msg["index"], msg["param"].toString(), value);

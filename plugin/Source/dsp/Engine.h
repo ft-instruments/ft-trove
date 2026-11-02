@@ -35,6 +35,8 @@ public:
   void setGroupVolume(int group, double linear);
   void setGroupPan(int group, double pan);                 // -1 .. 1
   void setTagVolume(const juce::String& tag, double linear);
+  // A group-level envelope binding sets that group's own stage, replacing the preset's value.
+  void setGroupEnv(int group, const juce::String& stage, double value);
   void setGroupFx(int group, int index, FxParam param, double value);
   void setFx(int index, FxParam param, double value);
   void loadImpulse(int index, const juce::File& file);
@@ -66,6 +68,7 @@ private:
   std::array<std::atomic<float>, 256> groupGain;       // 1 = as the preset has it
   std::array<std::atomic<float>, 256> groupPanOffset;
   std::array<std::atomic<float>, MAX_TAGS> tagGain;
+  std::array<std::array<std::atomic<float>, 4>, 256> groupEnv;   // attack, decay, sustain, release; <0 = not set
   // frequency, resonance and level of each effect a group carries
   std::array<std::array<std::array<std::atomic<float>, 3>, GROUP_FX>, 256> groupFx;
   std::atomic<float> globalTuning { 0.0f };

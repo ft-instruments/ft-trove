@@ -22,6 +22,7 @@ export type EngineMessage =
   | { kind: 'groupVolume'; group: number; value: number }
   | { kind: 'groupPan'; group: number; value: number }
   | { kind: 'tagVolume'; tag: string; value: number }
+  | { kind: 'groupEnv'; group: number; stage: 'attack' | 'decay' | 'sustain' | 'release'; value: number }
   | { kind: 'groupFx'; group: number; index: number; param: string; value: number }
   | { kind: 'fx'; index: number; param: string; value: number }
   | { kind: 'fxIr'; index: number; file: string }
@@ -44,10 +45,15 @@ function tablePoints(table: string): number[][] {
 export function translate(b: UiBinding, control: UiControl, value: number): number {
   let out = value;
   if (b.translation === 'table' && b.table) {
-    // The table's x axis is the control's travel, 0 to 1, not its raw value
-    // (Basic Piano's Tone runs 60..22000 against a table keyed 0..1).
-    const x = (value - control.min) / Math.max(1e-9, control.max - control.min);
     const pts = tablePoints(b.table);
+    // Most tables are keyed in the control's own units (ASIMOV's cutoff goes
+    // 0..10, LØ's velocity table 0..127). Basic Piano is the odd one: its Tone
+    // knob shows 60..22000 but its table is keyed 0..1, so normalize only when
+    // the table itself ends at 1.
+    const tableMax = pts.length ? pts[pts.length - 1][0] : 1;
+    const x = tableMax <= 1.001
+      ? (value - control.min) / Math.max(1e-9, control.max - control.min)
+      : value;
     if (pts.length) {
       out = pts[pts.length - 1][1];
       if (x <= pts[0][0]) out = pts[0][1];
@@ -105,6 +111,8 @@ const lower = (s: string | undefined): string => (s ?? '').toLowerCase();
 export function hostTarget(b: UiBinding): HostTarget | null {
   if (lower(b.type) !== 'amp') return null;
   const level = lower(b.level) || 'instrument';
+  // A group's envelope belongs to that group; the engine handles it (groupEnv).
+  if (level === 'group' || level === 'tag') return null;
   const parameter = upper(b.parameter);
   const same = (id: HostId): HostTarget => ({ id, toHost: (n) => n, fromHost: (h) => h });
   if (parameter.includes('ATTACK')) return same('attack');
@@ -146,6 +154,10 @@ export function engineMessage(b: UiBinding, native: Native): EngineMessage | nul
   if (level === 'group') {
     if (type === 'amp' && parameter === 'AMP_VOLUME') return { kind: 'groupVolume', group: position, value: n };
     if (type === 'amp' && parameter === 'PAN') return { kind: 'groupPan', group: position, value: n / 100 };
+    if (type === 'amp') {
+      const stage = (['attack', 'decay', 'sustain', 'release'] as const).find((s) => parameter === `ENV_${s.toUpperCase()}`);
+      if (stage) return { kind: 'groupEnv', group: position, stage, value: n };
+    }
     if (type === 'effect') {
       return { kind: 'groupFx', group: b.groupIndex ?? position, index: b.effectIndex ?? 0, param: parameter, value: n };
     }

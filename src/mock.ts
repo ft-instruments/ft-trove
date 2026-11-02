@@ -11,6 +11,7 @@ export const mockParams: ParamDef[] = [
   { id: 'decay', name: 'Decay', min: 0, max: 12, def: 0.3, skew: 2, unit: 's' },
   { id: 'sustain', name: 'Sustain', min: 0, max: 1, def: 1, skew: 1, unit: '' },
   { id: 'release', name: 'Release', min: 0, max: 20, def: 0.4, skew: 2.2, unit: 's' },
+  { id: 'output', name: 'Output', min: -36, max: 18, def: 0, skew: 1, unit: 'dB' },
 ];
 
 const demo = [

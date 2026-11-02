@@ -187,6 +187,7 @@ void Engine::resetRuntime(const Program& program) {
     for (int i = 0; i < GROUP_FX; ++i) { groupFx[(size_t)g][(size_t)i][0] = 22000.0f; groupFx[(size_t)g][(size_t)i][1] = 0.7f; groupFx[(size_t)g][(size_t)i][2] = 0.0f; }
   }
   for (auto& t : tagGain) t = 1.0f;
+  for (auto& e : groupEnv) for (auto& s : e) s = -1.0f;
   globalTuning = 0.0f;
   for (int i = 0; i < MAX_MODS; ++i) {
     const bool have = i < (int)program.modulators.size();
@@ -219,9 +220,11 @@ void Engine::setGroupEnabled(int group, bool on) {
 
 void Engine::setGroupVolume(int group, double linear) {
   if (group < 0 || group >= 256) return;
-  const auto p = program();
-  const double base = (p != nullptr && group < (int)p->groupVolume.size()) ? p->groupVolume[(size_t)group] : 1.0;
-  groupGain[(size_t)group] = (float)(base > 1.0e-6 ? juce::jmax(0.0, linear) / base : juce::jmax(0.0, linear));
+  // A group knob is a multiplier on the group's own XML volume, which is
+  // already baked into each zone's gain. Claustrophobic Piano and The Gaffer
+  // rely on this: their release/pedal layers sit at +20/+5 dB and the knobs
+  // start at 60%.
+  groupGain[(size_t)group] = (float)juce::jmax(0.0, linear);
 }
 
 void Engine::setGroupPan(int group, double pan) {
@@ -233,6 +236,12 @@ void Engine::setTagVolume(const juce::String& tag, double linear) {
   if (p == nullptr) return;
   const int id = p->tagNames.indexOf(tag);
   if (id >= 0 && id < MAX_TAGS) tagGain[(size_t)id] = (float)juce::jmax(0.0, linear);
+}
+
+void Engine::setGroupEnv(int group, const juce::String& stage, double value) {
+  if (group < 0 || group >= 256) return;
+  const int slot = stage == "attack" ? 0 : stage == "decay" ? 1 : stage == "sustain" ? 2 : stage == "release" ? 3 : -1;
+  if (slot >= 0) groupEnv[(size_t)group][(size_t)slot] = (float)juce::jmax(0.0, value);
 }
 
 void Engine::setGroupFx(int group, int index, FxParam param, double value) {
@@ -352,10 +361,14 @@ void Engine::startVoice(const Zone& zone, int note, float velocity,
   }
 
   const auto& pe = program->env;
-  const double attack = juce::jmax(0.0, zone.env.attack + (params[pAttack] - pe.attack));
-  const double decay = juce::jmax(0.0, zone.env.decay + (params[pDecay] - pe.decay));
-  const double release = juce::jmax(0.0005, zone.env.release + (params[pRelease] - pe.release));
-  const double sustain = pe.sustain > 0.0005
+  // A knob bound to one group's envelope sets that stage outright; the host
+  // knobs only shift groups the panel leaves alone.
+  const auto& own = groupEnv[(size_t)juce::jlimit(0, 255, slot->group)];
+  const double attack = own[0] >= 0.0f ? (double)own[0] : juce::jmax(0.0, zone.env.attack + (params[pAttack] - pe.attack));
+  const double decay = own[1] >= 0.0f ? (double)own[1] : juce::jmax(0.0, zone.env.decay + (params[pDecay] - pe.decay));
+  const double release = juce::jmax(0.0005, own[3] >= 0.0f ? (double)own[3] : zone.env.release + (params[pRelease] - pe.release));
+  const double sustain = own[2] >= 0.0f ? juce::jlimit(0.0, 1.0, (double)own[2])
+    : pe.sustain > 0.0005
     ? juce::jlimit(0.0, 1.0, zone.env.sustain * params[pSustain] / pe.sustain)
     : juce::jlimit(0.0, 1.0, params[pSustain]);
 
@@ -656,7 +669,7 @@ float Engine::renderChunk(float* left, float* right, int n,
     else reverb.processMono(left, n);
   }
 
-  const float gain = (float)juce::Decibels::decibelsToGain(params[pGain]);
+  const float gain = (float)juce::Decibels::decibelsToGain(params[pGain] + params[pOutput]);
   float peak = 0.0f;
   for (int i = 0; i < n; ++i) {
     left[i] = softClip(left[i] * gain);

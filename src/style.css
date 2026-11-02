@@ -863,7 +863,19 @@ button.ghost svg { width: 16px; height: 16px; fill: none; stroke: currentColor; 
   white-space: nowrap;
 }
 
-.knobs { display: flex; align-items: center; gap: 30px; margin-left: auto; }
+.out[hidden] { display: none; }
+.out { display: flex; align-items: center; gap: 9px; margin-left: auto; }
+.out span, .out b {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dimmer);
+  font-weight: 400;
+}
+.out b { width: 52px; letter-spacing: 0.04em; font-size: 9px; color: var(--dim); }
+.out input { width: 96px; accent-color: var(--brass); cursor: ew-resize; }
+.knobs { display: flex; align-items: center; gap: 30px; }
 .knob-set { display: flex; flex-direction: column; gap: 7px; }
 .knob-set + .knob-set { padding-left: 26px; border-left: 1px solid var(--line); }
 .set-title {

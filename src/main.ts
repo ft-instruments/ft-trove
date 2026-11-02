@@ -10,7 +10,7 @@ import { mockLibs, mockParams, mockRoots, mockUi } from './mock';
 
 type Kind = 'all' | 'folder' | 'archive';
 type View = 'shelf' | 'library' | 'player';
-type HostId = 'gain' | 'tone' | 'reverb' | 'attack' | 'decay' | 'sustain' | 'release';
+type HostId = 'gain' | 'output' | 'tone' | 'reverb' | 'attack' | 'decay' | 'sustain' | 'release';
 
 const state = {
   libs: [] as LibEntry[],
@@ -138,6 +138,11 @@ app.innerHTML = `
         <div class="meter"><i id="meterFill"></i></div>
         <span id="voiceCount">0 voices</span>
       </div>
+      <label class="out" title="Overall output volume (double-click to reset)">
+        <span>Output</span>
+        <input type="range" id="outSlider" min="-36" max="18" step="0.1" value="0">
+        <b id="outReadout">0.0 dB</b>
+      </label>
       <div class="knobs" id="knobs"></div>
     </div>
     <div class="keys" id="keys"></div>
@@ -429,7 +434,37 @@ function buildKnobs(): void {
   }
 }
 
+const outSlider = $<HTMLInputElement>('outSlider');
+const outReadout = $('outReadout');
+
+function showOutput(db: number): void {
+  const v = Math.abs(db) < 0.05 ? 0 : db;
+  outSlider.value = String(db);
+  outReadout.textContent = `${v > 0 ? '+' : ''}${v.toFixed(1)} dB`;
+}
+
+function buildOutput(): void {
+  const def = state.params.find((p) => p.id === 'output');
+  outSlider.parentElement!.hidden = !def;
+  if (!def) return;
+  outSlider.min = String(def.min);
+  outSlider.max = String(def.max);
+  showOutput(state.values.output ?? def.def);
+  outSlider.oninput = () => {
+    const v = Number(outSlider.value);
+    state.values.output = v;
+    showOutput(v);
+    send({ type: 'param', id: 'output', value: v });
+  };
+  outSlider.ondblclick = () => {
+    state.values.output = def.def;
+    showOutput(def.def);
+    send({ type: 'param', id: 'output', value: def.def });
+  };
+}
+
 function syncKnobs(): void {
+  if (state.values.output !== undefined) showOutput(state.values.output);
   for (const [id, knob] of knobs) {
     const v = state.values[id];
     if (v !== undefined) knob.set(v);
@@ -711,6 +746,7 @@ if (inPlugin()) {
         state.live = true;
         state.params = (msg.params ?? []) as ParamDef[];
         buildKnobs();
+        buildOutput();
         useValues((msg.values ?? {}) as Record<string, number>);
         break;
       case 'index':
@@ -742,6 +778,7 @@ if (inPlugin()) {
   state.roots = mockRoots;
   state.values = Object.fromEntries(mockParams.map((p) => [p.id, p.def]));
   buildKnobs();
+  buildOutput();
   renderRoots();
   renderGrid();
   $('demoNote').textContent = 'browser preview — demo data, no audio';

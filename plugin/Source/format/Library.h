@@ -169,7 +169,7 @@ struct Program {
   double volume = 1.0;
   int groups = 0;
   std::vector<char> groupOn;        // enabled="false" groups start switched off
-  std::vector<double> groupVolume;  // each group's own volume, so a knob can replace it
+  std::vector<double> groupVolume;  // each group's own volume, baked into zone gain; knobs scale it
   juce::StringArray tagNames;
   std::vector<Effect> effects;      // the instrument chain, in file order
   std::vector<std::vector<Effect>> groupEffects;

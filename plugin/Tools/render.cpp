@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
   const bool rrTest = juce::String::fromUTF8(argv[1]) == "--rr" && argc > 4;
   // --run <preset> <note> "<step>;<step>;..": press the key and apply panel
   // controls as the page would, printing the level after each "r" step.
-  //   r | tag:NAME:V | gvol:G:V | gpan:G:V | gon:G:0/1 | fx:I:PARAM:V | gfx:G:I:PARAM:V | tune:V
+  //   r | tag:NAME:V | genv:G:STAGE:V | gvol:G:V | gpan:G:V | gon:G:0/1 | fx:I:PARAM:V | gfx:G:I:PARAM:V | tune:V
   const bool runTest = juce::String::fromUTF8(argv[1]) == "--run" && argc > 4;
   juce::File preset(juce::String::fromUTF8(argv[(rrTest || runTest) ? 2 : 1]));
   trove::SampleLoader loader;
@@ -178,6 +178,7 @@ int main(int argc, char** argv) {
         std::printf("  level %7.1f dB   voices %d\n", juce::Decibels::gainToDecibels(rms, -120.0), engine.activeVoices());
       } else if (op == "tag") engine.setTagVolume(parts[1], num(2));
       else if (op == "gvol") engine.setGroupVolume((int)num(1), num(2));
+      else if (op == "genv") engine.setGroupEnv((int)num(1), parts[2], num(3));
       else if (op == "gpan") engine.setGroupPan((int)num(1), num(2));
       else if (op == "gon") engine.setGroupEnabled((int)num(1), num(2) >= 0.5);
       else if (op == "probe") {
