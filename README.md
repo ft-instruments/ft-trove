@@ -15,6 +15,34 @@ The standalone lands in `plugin/build/Trove_artefacts/Release/Standalone`;
 the VST3 is copied to `~/.vst3` (Linux) or `~/Library/Audio/Plug-Ins/VST3`
 (macOS) by the build.
 
+## Download
+
+Builds of the VST3, the AU (macOS only) and the standalone app for macOS,
+Windows and Linux are attached to each
+[release](https://github.com/filipefthomaz-gd/ft-trove/releases).
+
+| | Standalone | VST3 | AU |
+|---|---|---|---|
+| macOS (Apple silicon + Intel) | yes | yes | yes |
+| Windows | yes | yes | no |
+| Linux | yes | yes | no |
+
+Unzip and copy the plugin to your plugin folder (macOS
+`~/Library/Audio/Plug-Ins/{VST3,Components}`, Windows
+`C:\Program Files\Common Files\VST3`, Linux `~/.vst3`). The builds are not
+signed or notarized: on macOS right-click the app and choose Open the first
+time (or run `xattr -dr com.apple.quarantine` on the files); on Windows
+SmartScreen asks once. The Windows editor needs the WebView2 runtime
+(included in Windows 11); on Linux it needs WebKitGTK.
+
+## Privacy
+
+TROVE makes no network connections: no telemetry, no update check, no
+analytics, no accounts. The UI uses system fonts, the plugin serves it from
+memory (`PluginEditor.cpp`, a JUCE resource provider), and JUCE is built
+without its networking code (`JUCE_USE_CURL=0`). Libraries are read from your
+own folders; the index and thumbnails are cached on your disk.
+
 ## Why it is not a licensing problem
 
 Decent Sampler's *engine* is closed source, but the *file format* is
@@ -97,3 +125,12 @@ print zone/group counts, the resolved envelope, missing-sample warnings and
 the rendered peak; they exit non-zero on silence. `--scan` runs the real
 scanner over your folders, makes the thumbnails and reports anything it
 could not read.
+
+## License
+
+TROVE is free software under the [GNU AGPL v3](LICENSE). The plugin is built
+on [JUCE](https://juce.com), which is itself AGPLv3 (or commercial), so the
+whole thing is distributed under the AGPL (see
+[THIRD-PARTY.md](THIRD-PARTY.md)): you can use it for anything, including
+music you sell, and change it and share it, as long as a modified version you
+distribute comes with its source under the same license.

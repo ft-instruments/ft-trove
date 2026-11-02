@@ -9,14 +9,14 @@ namespace {
 
 const char* mimeFor(const juce::String& file) {
   const auto ext = file.fromLastOccurrenceOf(".", false, false).toLowerCase();
-  if (ext == "html") return "text/html";
-  if (ext == "js") return "text/javascript";
-  if (ext == "css") return "text/css";
+  if (ext == "html") return "text/html; charset=utf-8";
+  if (ext == "js") return "text/javascript; charset=utf-8";
+  if (ext == "css") return "text/css; charset=utf-8";
   if (ext == "svg") return "image/svg+xml";
   if (ext == "png") return "image/png";
   if (ext == "jpg" || ext == "jpeg") return "image/jpeg";
   if (ext == "webp") return "image/webp";
-  if (ext == "json") return "application/json";
+  if (ext == "json") return "application/json; charset=utf-8";
   if (ext == "woff2") return "font/woff2";
   if (ext == "woff") return "font/woff";
   return "application/octet-stream";

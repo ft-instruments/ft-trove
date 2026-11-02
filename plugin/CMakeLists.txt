@@ -24,6 +24,9 @@ FetchContent_Declare(JUCE
   PATCH_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/patch-juce.cmake)
 FetchContent_MakeAvailable(JUCE)
 
+# Copy the built plugins into the user's plugin folders (off in CI).
+option(TROVE_INSTALL "Install the plugins after building" ON)
+
 # Everything the plugin and the offline renderer share.
 add_library(trove_core STATIC
   Source/format/Dspreset.cpp
@@ -63,7 +66,8 @@ juce_add_plugin(Trove
   NEEDS_WEB_BROWSER TRUE
   VST3_CATEGORIES Instrument Synth
   AU_MAIN_TYPE kAudioUnitType_MusicDevice
-  COPY_PLUGIN_AFTER_BUILD TRUE)
+  NEEDS_WEBVIEW2 TRUE
+  COPY_PLUGIN_AFTER_BUILD ${TROVE_INSTALL})
 
 target_sources(Trove PRIVATE
   Source/PluginProcessor.cpp
@@ -73,6 +77,7 @@ target_include_directories(Trove PRIVATE Source)
 
 target_compile_definitions(Trove PUBLIC
   JUCE_WEB_BROWSER=1
+  JUCE_USE_WIN_WEBVIEW2_WITH_STATIC_LINKING=1
   JUCE_USE_CURL=0
   JUCE_VST3_CAN_REPLACE_VST2=0)
 
