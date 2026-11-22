@@ -3,3 +3,9 @@ dist
 out
 plugin/build/
 examples/*/Samples/
+.DS_Store
+.claude/
+.env
+.env.*
+*.pem
+*.key
