@@ -19,7 +19,7 @@ the VST3 is copied to `~/.vst3` (Linux) or `~/Library/Audio/Plug-Ins/VST3`
 
 Builds of the VST3, the AU (macOS only) and the standalone app for macOS,
 Windows and Linux are attached to each
-[release](https://github.com/filipefthomaz-gd/ft-trove/releases).
+[release](https://github.com/ft-instruments/ft-trove/releases).
 
 | | Standalone | VST3 | AU |
 |---|---|---|---|
@@ -30,8 +30,8 @@ Windows and Linux are attached to each
 Unzip and copy the plugin to your plugin folder (macOS
 `~/Library/Audio/Plug-Ins/{VST3,Components}`, Windows
 `C:\Program Files\Common Files\VST3`, Linux `~/.vst3`). The builds are not
-signed or notarized: on macOS right-click the app and choose Open the first
-time (or run `xattr -dr com.apple.quarantine` on the files); on Windows
+signed or notarized: on macOS run `xattr -dr com.apple.quarantine` on the
+files you copied (or right-click the app and choose Open the first time); on Windows
 SmartScreen asks once. The Windows editor needs the WebView2 runtime
 (included in Windows 11); on Linux it needs WebKitGTK.
 
@@ -56,7 +56,7 @@ those is the one case to check per library.
 
 ## How it is built
 
-Same shape as Mycelia: the UI is TypeScript in a JUCE WebView, the audio and
+The UI is TypeScript in a JUCE WebView, the audio and
 the file handling are C++. No DSP is duplicated in the browser.
 
 ```
@@ -128,9 +128,12 @@ could not read.
 
 ## License
 
+Copyright (C) 2026 Filipe F. Thomaz.
+
 TROVE is free software under the [GNU AGPL v3](LICENSE). The plugin is built
 on [JUCE](https://juce.com), which is itself AGPLv3 (or commercial), so the
-whole thing is distributed under the AGPL (see
+whole thing is distributed under the AGPL (the bundled fonts keep their own
+[SIL OFL](src/fonts/); see
 [THIRD-PARTY.md](THIRD-PARTY.md)): you can use it for anything, including
 music you sell, and change it and share it, as long as a modified version you
 distribute comes with its source under the same license.
