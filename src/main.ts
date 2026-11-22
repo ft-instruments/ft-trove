@@ -45,7 +45,7 @@ app.innerHTML = `
       </svg>
       <span class="wordmark">
         <span class="word">TROVE</span>
-        <span class="tagline">sampled instruments</span>
+        <span class="tagline">FT · sampled instruments</span>
       </span>
     </button>
 
